@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-class UNet(tf.keras.Model):
+class UNetTCED(tf.keras.Model):
     """
     Skip Connection to add encoder output to corresponding decoder input at same depth level.
     Similar to Copy and Crop from the original U-Net architecture.
@@ -17,7 +17,7 @@ class UNet(tf.keras.Model):
         return primary
 
     @staticmethod
-    def skip_connection_fc(primary, encoder_blocks_output):
+    def skip_connections(primary, encoder_blocks_output):
         primary_shape = primary.shape
         for layer in encoder_blocks_output:
             layer_shape = layer.shape
@@ -69,50 +69,50 @@ class UNet(tf.keras.Model):
     """
 
     def __init__(self, filters, classes, input_size):
-        super(UNet, self).__init__()
+        super(UNetTCED, self).__init__()
         self.filters = filters
         self.classes = classes
         self.encoder_block_1_conv1, \
-        self.encoder_block_1_conv2, \
-        self.encoder_block_1_maxpool, \
-        self.encoder_block_1_dropout1 = self.encoder_block(block_depth=0, dropout_rate=0.3)
+            self.encoder_block_1_conv2, \
+            self.encoder_block_1_maxpool, \
+            self.encoder_block_1_dropout1 = self.encoder_block(block_depth=0, dropout_rate=0.3)
 
         self.encoder_block_2_conv1, \
-        self.encoder_block_2_conv2, \
-        self.encoder_block_2_maxpool, \
-        self.encoder_block_2_dropout2 = self.encoder_block(block_depth=1, dropout_rate=0.3)
+            self.encoder_block_2_conv2, \
+            self.encoder_block_2_maxpool, \
+            self.encoder_block_2_dropout2 = self.encoder_block(block_depth=1, dropout_rate=0.3)
 
         self.encoder_block_3_conv1, \
-        self.encoder_block_3_conv2, \
-        self.encoder_block_3_maxpool, \
-        self.encoder_block_3_dropout3 = self.encoder_block(block_depth=2, dropout_rate=0.3)
+            self.encoder_block_3_conv2, \
+            self.encoder_block_3_maxpool, \
+            self.encoder_block_3_dropout3 = self.encoder_block(block_depth=2, dropout_rate=0.3)
 
         self.encoder_block_4_conv1, \
-        self.encoder_block_4_conv2, \
-        self.encoder_block_4_maxpool, \
-        self.encoder_block_4_dropout4 = self.encoder_block(block_depth=3, dropout_rate=0.3)
+            self.encoder_block_4_conv2, \
+            self.encoder_block_4_maxpool, \
+            self.encoder_block_4_dropout4 = self.encoder_block(block_depth=3, dropout_rate=0.3)
 
         self.bottle_neck_block_conv1, \
-        self.bottle_neck_block_conv2 = self.bottle_neck_block(block_depth=4)
+            self.bottle_neck_block_conv2 = self.bottle_neck_block(block_depth=4)
 
         self.decoder_block_4_upconv, \
-        self.decoder_block_4_conv1, \
-        self.decoder_block_4_conv2 = self.decoder_block(block_depth=3)
+            self.decoder_block_4_conv1, \
+            self.decoder_block_4_conv2 = self.decoder_block(block_depth=3)
 
         self.decoder_block_3_upconv, \
-        self.decoder_block_3_conv1, \
-        self.decoder_block_3_conv2 = self.decoder_block(block_depth=2)
+            self.decoder_block_3_conv1, \
+            self.decoder_block_3_conv2 = self.decoder_block(block_depth=2)
 
         self.decoder_block_2_upconv, \
-        self.decoder_block_2_conv1, \
-        self.decoder_block_2_conv2 = self.decoder_block(block_depth=1)
+            self.decoder_block_2_conv1, \
+            self.decoder_block_2_conv2 = self.decoder_block(block_depth=1)
 
         self.decoder_block_1_upconv, \
-        self.decoder_block_1_conv1, \
-        self.decoder_block_1_conv2 = self.decoder_block(block_depth=0)
+            self.decoder_block_1_conv1, \
+            self.decoder_block_1_conv2 = self.decoder_block(block_depth=0)
 
         self.output_block_0_conv, \
-        self.output_block_0_output, = self.output_block(classes=classes)
+            self.output_block_0_output, = self.output_block(classes=classes)
 
         self.build(input_size)
         self.compile(optimizer='adam',
@@ -307,7 +307,7 @@ class UNet(tf.keras.Model):
             print("decoder_block_4_upconv shape", x.shape)
 
         # x = UNet.skip_connection(x, skip_connection_input_4)
-        x = UNet.skip_connection_fc(x, encoder_blocks_output)
+        x = UNetTCED.skip_connections(x, encoder_blocks_output)
 
         if tpt3:
             print("D x", x.shape, 'and skip_connection_input_4 shape', skip_connection_input_4.shape)
@@ -323,7 +323,7 @@ class UNet(tf.keras.Model):
             print("decoder_block_3_upconv shape", x.shape)
 
         # x = UNet.skip_connection(x, skip_connection_input_3)
-        x = UNet.skip_connection_fc(x, encoder_blocks_output)
+        x = UNetTCED.skip_connections(x, encoder_blocks_output)
 
         if tpt3:
             print("D x", x.shape, 'and skip_connection_input_3 shape', skip_connection_input_3.shape)
@@ -339,7 +339,7 @@ class UNet(tf.keras.Model):
             print("decoder_block_2_upconv shape", x.shape)
 
         # x = UNet.skip_connection(x, skip_connection_input_2)
-        x = UNet.skip_connection_fc(x, encoder_blocks_output)
+        x = UNetTCED.skip_connections(x, encoder_blocks_output)
 
         if tpt3:
             print("D x", x.shape, 'and skip_connection_input_2 shape', skip_connection_input_2.shape)
@@ -355,7 +355,7 @@ class UNet(tf.keras.Model):
             print("decoder_block_1_upconv shape", x.shape)
 
         # x = UNet.skip_connection(x, skip_connection_input_1)
-        x = UNet.skip_connection_fc(x, encoder_blocks_output)
+        x = UNetTCED.skip_connections(x, encoder_blocks_output)
 
         if tpt3:
             print("D x", x.shape, 'and skip_connection_input_1 shape', skip_connection_input_1.shape)

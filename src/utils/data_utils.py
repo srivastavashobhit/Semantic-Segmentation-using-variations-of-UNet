@@ -73,3 +73,18 @@ def get_inference_dataset(images_source_url, batch_size=32):
     inference_dataset = inference_dataset.cache().batch(batch_size)
 
     return inference_dataset
+
+
+def get_inference_dataset_numpy(numpy_images, batch_size=32):
+
+    images_list = tf.constant(numpy_images)
+
+    images_list_tensors = tf.data.Dataset.from_tensor_slices(images_list)
+
+    inference_dataset = images_list_tensors.map(resize_image)
+
+    inference_dataset.batch(batch_size)
+
+    inference_dataset = inference_dataset.cache().batch(batch_size)
+
+    return inference_dataset

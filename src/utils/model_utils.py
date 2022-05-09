@@ -1,14 +1,17 @@
 import tensorflow as tf
+import glob
+import os
+
 from tensorflow.python.keras.callbacks import CSVLogger
 
-from model import UNet
-from utils.values_utils import CKPT_DIR, SAVE_WEIGHTS_ONLY, LOGGER_DIR, TENSORBOARD_LOG_DIR, CLASSES, FILTERS, \
-    INPUT_SIZE, LAST_CKPT_DIR
+from model_unet_tced import UNetTCED
+from utils.values_utils import MODEL_DIR, MODEL_FILEPATH, SAVE_WEIGHTS_ONLY, LOGGER_DIR, TENSORBOARD_LOG_DIR, CLASSES, \
+    FILTERS, INPUT_SIZE
 
 
-def get_callbacks(ckpt_dir=CKPT_DIR, save_weights_only=SAVE_WEIGHTS_ONLY, logger_dir=LOGGER_DIR,
+def get_callbacks(ckpt_path=MODEL_FILEPATH, save_weights_only=SAVE_WEIGHTS_ONLY, logger_dir=LOGGER_DIR,
                   tensorboard_dir=TENSORBOARD_LOG_DIR):
-    checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_dir,
+    checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_path,
                                                     save_weights_only=save_weights_only,
                                                     monitor='val_accuracy',
                                                     mode='max',
@@ -28,8 +31,10 @@ def get_callbacks(ckpt_dir=CKPT_DIR, save_weights_only=SAVE_WEIGHTS_ONLY, logger
 
 
 def get_model_from_checkpoint():
-    model = UNet(FILTERS, CLASSES, INPUT_SIZE)
-    latest = tf.train.latest_checkpoint(LAST_CKPT_DIR)
+
+    model = UNetTCED(FILTERS, CLASSES, INPUT_SIZE)
+    all_models_names = [os.path.basename(x) for x in glob.glob(os.path.join(MODEL_DIR, "*.hdf5"))]
+    latest = os.path.join(MODEL_DIR, max(all_models_names))
     model.load_weights(latest)
     return model
 

@@ -4,13 +4,14 @@ import argparse
 
 from tensorflow.python.ops.numpy_ops import np_config
 
-from utils.data_utils import get_inference_dataset
+from utils.data_utils import get_inference_dataset, get_inference_dataset_numpy
 from utils.file_utils import create_directory
 from utils.image_utils import read_image, resize_image, get_image_from_array
 from train import train_new_model, train_from_ckpt
 from utils.model_utils import get_model_from_checkpoint, generate_prediction
 from utils.display_utils import display_inference, create_mask, create_mask_one
 from utils.values_utils import INF_INPUT_SIZE
+from utils.video_utils import get_all_frames_from_videos
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -18,20 +19,29 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--new', type=bool, help="Is new training.")
     parser.add_argument('-m', '--multiple', type=bool, help="Is multiple prediction.")
     parser.add_argument('-f', '--source_folder', type=str, help="Source folder of images.")
-    parser.add_argument('-i', '--image_url', type=str, help="Provide a Image URL.")
+    parser.add_argument('-u', '--file_url', type=str, help="Provide a file URL.")
     parser.add_argument('-d', '--display', type=bool, help="Display the prediction.")
     parser.add_argument('-s', '--save', type=bool, help="Save the prediction.")
     parser.add_argument('-e', '--extension', type=str, help="Image Extension.")
+    parser.add_argument('-v', '--video', type=str, help="Video file path.")
     args = parser.parse_args()
 
     if args.task == "training":
         if args.new:
-            train_new_model().history("accuracy")
+            train_new_model()
         else:
-            train_from_ckpt().history("accuracy")
+            train_from_ckpt()
     elif args.task == "inference":
         model = get_model_from_checkpoint()
-        if args.multiple:
+        if args.video:
+            assert args.file_url is not None
+            frames = get_all_frames_from_videos(args.file_url)
+            print("frames", frames)
+            inference_dataset = get_inference_dataset_numpy(args.source_folder, batch_size=32)
+            predicted_tensors = create_mask(generate_prediction(model, inference_dataset))
+            print("predicted_tensors", predicted_tensors)
+
+        elif args.multiple:
             assert args.source_folder is not None
             assert args.extension is not None
             destination_path = create_directory(args.source_folder)
@@ -44,10 +54,10 @@ if __name__ == "__main__":
                 prediction_image.save(os.path.join(destination_path, str(names[c]) + "_output."+args.extension))
                 c += 1
         else:
-            assert args.image_url is not None
+            assert args.file_url is not None
             assert args.extension is not None
             np_config.enable_numpy_behavior()
-            input_tensor = resize_image(read_image(args.image_url)).reshape(INF_INPUT_SIZE)
+            input_tensor = resize_image(read_image(args.file_url)).reshape(INF_INPUT_SIZE)
             predicted_tensor = create_mask_one(generate_prediction(model, input_tensor))
             prediction_image = get_image_from_array(predicted_tensor)
             input_image = get_image_from_array(input_tensor[0])
