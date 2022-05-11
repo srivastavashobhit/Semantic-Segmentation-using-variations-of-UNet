@@ -192,146 +192,68 @@ class UNetSTD(tf.keras.Model):
         tpt = False
         tpt2 = False
         tpt3 = False
-        if tpt:
-            print("************************", inputs.shape)
         x = self.encoder_block_1_conv1(inputs)
-        if tpt:
-            print("encoder_block_1_conv1 shape", x.shape)
         x = self.encoder_block_1_conv2(x)
-        if tpt:
-            print("encoder_block_1_conv2 shape", x.shape)
         skip_connection_input_1 = tf.identity(x)
-        if tpt2:
-            print("E skip_connection_input _1 shape", x.shape)
         x = self.encoder_block_1_maxpool(x)
-        if tpt:
-            print("encoder_block_1_maxpool shape", x.shape)
         if training:
             x = self.encoder_block_1_dropout1(x)
 
         x = self.encoder_block_2_conv1(x)
-        if tpt:
-            print("encoder_block_2_conv1 shape", x.shape)
         x = self.encoder_block_2_conv2(x)
-        if tpt:
-            print("encoder_block_2_conv2 shape", x.shape)
         skip_connection_input_2 = tf.identity(x)
-        if tpt2:
-            print("E skip_connection_input _2 shape", x.shape)
         x = self.encoder_block_2_maxpool(x)
-        if tpt:
-            print("encoder_block_2_maxpool shape", x.shape)
         if training:
             x = self.encoder_block_2_dropout2(x)
 
         x = self.encoder_block_3_conv1(x)
-        if tpt:
-            print("encoder_block_3_conv1 shape", x.shape)
         x = self.encoder_block_3_conv2(x)
-        if tpt:
-            print("encoder_block_3_conv2 shape", x.shape)
         skip_connection_input_3 = tf.identity(x)
-        if tpt2:
-            print("E skip_connection_input _3 shape", x.shape)
         x = self.encoder_block_3_maxpool(x)
-        if tpt:
-            print("encoder_block_3_maxpool shape", x.shape)
         if training:
             x = self.encoder_block_3_dropout3(x)
         x = self.encoder_block_4_conv1(x)
-        if tpt:
-            print("encoder_block_4_conv1 shape", x.shape)
         x = self.encoder_block_4_conv2(x)
-        if tpt:
-            print("encoder_block_4_conv2 shape", x.shape)
         skip_connection_input_4 = tf.identity(x)
-        if tpt2:
-            print("E skip_connection_input _4 shape", x.shape)
         x = self.encoder_block_4_maxpool(x)
-        if tpt:
-            print("encoder_block_4_maxpool shape", x.shape)
         if training:
             x = self.encoder_block_4_dropout4(x)
 
         x = self.bottle_neck_block_conv1(x)
-        if tpt:
-            print("bottle_neck_block_conv1 shape", x.shape)
         x = self.bottle_neck_block_conv2(x)
-        if tpt:
-            print("bottle_neck_block_conv2 shape", x.shape)
 
         encoder_blocks_output = [skip_connection_input_1, skip_connection_input_2, skip_connection_input_3,
                                  skip_connection_input_4]
 
         x = self.decoder_block_4_upconv(x)
-        if tpt:
-            print("decoder_block_4_upconv shape", x.shape)
 
-        # x = UNet.skip_connection(x, skip_connection_input_4)
         x = UNetSTD.skip_connection(x, encoder_blocks_output)
 
-        if tpt3:
-            print("D x", x.shape, 'and skip_connection_input_4 shape', skip_connection_input_4.shape)
         x = self.decoder_block_4_conv1(x)
-        if tpt:
-            print("decoder_block_4_conv1 shape", x.shape)
         x = self.decoder_block_4_conv2(x)
-        if tpt:
-            print("decoder_block_4_conv2 shape", x.shape)
 
         x = self.decoder_block_3_upconv(x)
-        if tpt:
-            print("decoder_block_3_upconv shape", x.shape)
 
-        # x = UNet.skip_connection(x, skip_connection_input_3)
         x = UNetSTD.skip_connection(x, encoder_blocks_output)
 
-        if tpt3:
-            print("D x", x.shape, 'and skip_connection_input_3 shape', skip_connection_input_3.shape)
         x = self.decoder_block_3_conv1(x)
-        if tpt:
-            print("decoder_block_3_conv1 shape", x.shape)
         x = self.decoder_block_3_conv2(x)
-        if tpt:
-            print("decoder_block_3_conv2 shape", x.shape)
 
         x = self.decoder_block_2_upconv(x)
-        if tpt:
-            print("decoder_block_2_upconv shape", x.shape)
 
-        # x = UNet.skip_connection(x, skip_connection_input_2)
         x = UNetSTD.skip_connection(x, encoder_blocks_output)
 
-        if tpt3:
-            print("D x", x.shape, 'and skip_connection_input_2 shape', skip_connection_input_2.shape)
         x = self.decoder_block_2_conv1(x)
-        if tpt:
-            print("decoder_block_2_conv1 shape", x.shape)
         x = self.decoder_block_2_conv2(x)
-        if tpt:
-            print("decoder_block_2_conv2 shape", x.shape)
 
         x = self.decoder_block_1_upconv(x)
-        if tpt:
-            print("decoder_block_1_upconv shape", x.shape)
 
-        # x = UNet.skip_connection(x, skip_connection_input_1)
         x = UNetSTD.skip_connection(x, encoder_blocks_output)
 
-        if tpt3:
-            print("D x", x.shape, 'and skip_connection_input_1 shape', skip_connection_input_1.shape)
         x = self.decoder_block_1_conv1(x)
-        if tpt:
-            print("decoder_block_1_conv1 shape", x.shape)
         x = self.decoder_block_1_conv2(x)
-        if tpt:
-            print("decoder_block_1_conv2 shape", x.shape)
 
         x = self.output_block_0_conv(x)
-        if tpt:
-            print("output_block_0_conv shape", x.shape)
         x = self.output_block_0_output(x)
-        if tpt:
-            print("output_block_0_output shape", x.shape)
 
         return x

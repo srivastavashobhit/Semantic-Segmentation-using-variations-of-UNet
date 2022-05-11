@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--display', type=bool, help="Display the prediction.")
     parser.add_argument('-s', '--save', type=bool, help="Save the prediction.")
     parser.add_argument('-e', '--extension', type=str, help="Image Extension.")
-    parser.add_argument('-v', '--video', type=str, help="Video file path.")
+    parser.add_argument('-o', '--video', type=bool, help="Is Video.")
     args = parser.parse_args()
 
     if args.task == "training":
