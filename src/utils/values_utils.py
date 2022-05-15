@@ -18,10 +18,13 @@ INF_INPUT_SIZE = (1, 96, 128, 3)
 # Callbacks Inputs
 CURR_DATETIME = str(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 MODEL_DIR = "./saved_model/"
-MODEL_FILEPATH = MODEL_DIR + CURR_DATETIME + '.epoch{epoch:02d}-loss{val_loss:.2f}.hdf5'
+MODEL_EXTENSION = '.hdf5'
+#MODEL_FILEPATH = MODEL_DIR + CURR_DATETIME + '.epoch{epoch:02d}-loss{val_loss:.2f}.hdf5'
+#MODEL_FILEPATH = MODEL_DIR + CURR_DATETIME + MODEL_EXTENSION
 TENSORBOARD_LOG_DIR = "./tensorboard_logs_dir/logs"+CURR_DATETIME
 LOGGER_DIR = "./csv_logger_dir/training"+CURR_DATETIME+".log"
 SAVE_WEIGHTS_ONLY = True
+SAVE_BEST_ONLY = True
 
 # Data Inputs
 IMAGES_SRC = "./data/carla/images"

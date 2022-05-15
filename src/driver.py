@@ -8,7 +8,7 @@ from utils.data_utils import get_inference_dataset, get_inference_dataset_numpy
 from utils.file_utils import create_directory
 from utils.image_utils import read_image, resize_image, get_image_from_array
 from train import train_new_model, train_from_ckpt
-from utils.model_utils import get_model_from_checkpoint, generate_prediction
+from utils.model_utils import get_latest_model, generate_prediction
 from utils.display_utils import display_inference, create_mask, create_mask_one
 from utils.values_utils import INF_INPUT_SIZE
 from utils.video_utils import get_all_frames_from_videos
@@ -16,6 +16,7 @@ from utils.video_utils import get_all_frames_from_videos
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--task', type=str, required=True, help="Provide a task.")
+    parser.add_argument('-v', '--variation', type=str, help="Variation.")
     parser.add_argument('-n', '--new', type=bool, help="Is new training.")
     parser.add_argument('-m', '--multiple', type=bool, help="Is multiple prediction.")
     parser.add_argument('-f', '--source_folder', type=str, help="Source folder of images.")
@@ -24,15 +25,16 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--save', type=bool, help="Save the prediction.")
     parser.add_argument('-e', '--extension', type=str, help="Image Extension.")
     parser.add_argument('-o', '--video', type=bool, help="Is Video.")
+
     args = parser.parse_args()
 
     if args.task == "training":
         if args.new:
-            train_new_model()
+            train_new_model(model_type=args.variation)
         else:
-            train_from_ckpt()
+            train_from_ckpt(model_type=args.variation)
     elif args.task == "inference":
-        model = get_model_from_checkpoint()
+        model = get_latest_model()
         if args.video:
             assert args.file_url is not None
             frames = get_all_frames_from_videos(args.file_url)

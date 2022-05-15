@@ -189,9 +189,7 @@ class UNetSTD(tf.keras.Model):
         return conv, output
 
     def call(self, inputs, training=False):
-        tpt = False
-        tpt2 = False
-        tpt3 = False
+
         x = self.encoder_block_1_conv1(inputs)
         x = self.encoder_block_1_conv2(x)
         skip_connection_input_1 = tf.identity(x)
@@ -222,33 +220,30 @@ class UNetSTD(tf.keras.Model):
         x = self.bottle_neck_block_conv1(x)
         x = self.bottle_neck_block_conv2(x)
 
-        encoder_blocks_output = [skip_connection_input_1, skip_connection_input_2, skip_connection_input_3,
-                                 skip_connection_input_4]
-
         x = self.decoder_block_4_upconv(x)
 
-        x = UNetSTD.skip_connection(x, encoder_blocks_output)
+        x = UNetSTD.skip_connection(x, skip_connection_input_4)
 
         x = self.decoder_block_4_conv1(x)
         x = self.decoder_block_4_conv2(x)
 
         x = self.decoder_block_3_upconv(x)
 
-        x = UNetSTD.skip_connection(x, encoder_blocks_output)
+        x = UNetSTD.skip_connection(x, skip_connection_input_3)
 
         x = self.decoder_block_3_conv1(x)
         x = self.decoder_block_3_conv2(x)
 
         x = self.decoder_block_2_upconv(x)
 
-        x = UNetSTD.skip_connection(x, encoder_blocks_output)
+        x = UNetSTD.skip_connection(x, skip_connection_input_2)
 
         x = self.decoder_block_2_conv1(x)
         x = self.decoder_block_2_conv2(x)
 
         x = self.decoder_block_1_upconv(x)
 
-        x = UNetSTD.skip_connection(x, encoder_blocks_output)
+        x = UNetSTD.skip_connection(x, skip_connection_input_1)
 
         x = self.decoder_block_1_conv1(x)
         x = self.decoder_block_1_conv2(x)
