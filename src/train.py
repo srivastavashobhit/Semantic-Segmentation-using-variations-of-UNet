@@ -1,5 +1,5 @@
-from model_unet_tced import UNetTCED
-from model_unet_std import UNetSTD
+from models.unet_tced import UNetTCED
+from models.unet_std import UNetSTD
 from utils.data_utils import get_train_dataset
 from utils.model_utils import get_callbacks, get_latest_model
 from utils.values_utils import IMAGES_SRC, MASKS_SRC, VAL_SPLIT, BATCH_SIZE, EPOCHS, FILTERS, CLASSES, INPUT_SIZE
@@ -10,6 +10,8 @@ def train_new_model(model_type, images_src=IMAGES_SRC, masks_src=MASKS_SRC, val_
     if model_type == 'UNetTCED':
         print("Model: UNet Tightly Connected Encoder and Decoder")
         model = UNetTCED(FILTERS, CLASSES, INPUT_SIZE)
+    elif model_type == 'UNetResUNet':
+        model = None
     else:
         print("Model: Standard UNet")
         model = UNetSTD(FILTERS, CLASSES, INPUT_SIZE)

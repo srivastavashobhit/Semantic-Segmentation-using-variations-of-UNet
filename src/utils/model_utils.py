@@ -4,7 +4,7 @@ import os
 
 from tensorflow.python.keras.callbacks import CSVLogger
 
-from model_unet_tced import UNetTCED
+from models.unet_tced import UNetTCED
 from utils.values_utils import LOGGER_DIR, TENSORBOARD_LOG_DIR, CLASSES, \
     FILTERS, INPUT_SIZE, CURR_DATETIME, MODEL_DIR, MODEL_EXTENSION
 
