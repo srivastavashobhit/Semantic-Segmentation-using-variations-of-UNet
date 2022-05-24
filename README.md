@@ -57,9 +57,17 @@ degradation problem in deep architectures.
 
 ### Results
 
-Results are not yet calculated for Res-U-Net. Will be done soon.
-
 ![alt text](https://miro.medium.com/max/750/1*QDbK90Ar21mg5hYZvYzxzA.png)
+
+#### Inference on Carla Self Driving Car Dataset
+
+![alt text](https://miro.medium.com/max/1400/1*f_bZokDyirlArd7m9Vamkw.png)
+
+#### Inference on images clicked in San Francisco
+![alt text](https://miro.medium.com/max/1400/1*uDr9aJosrB-zaemea8pRnQ.png)
+
+https://miro.medium.com/max/1400/1*f_bZokDyirlArd7m9Vamkw.png
+https://miro.medium.com/max/1400/1*uDr9aJosrB-zaemea8pRnQ.png
 
 
 ### Commands to run
@@ -79,6 +87,7 @@ Results are not yet calculated for Res-U-Net. Will be done soon.
 
 ##### Inference single image
 `python .\src\driver.py -t inference -i .\data\carla\test\test_1\7.png -d True -s True -e png`
+
 
 
 
